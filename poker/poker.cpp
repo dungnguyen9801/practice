@@ -15,8 +15,13 @@ bool a[nn][ss];
 inline bool good(int l) { return l== 0 || l == 3; }
 inline bool f(int l) { return (1+l) > 3 ? 3 : 1 + l; }
 
+vector<vector<string>> tests;
+unorder_map<char, int> mp;
+
 bool run(vector<string> cards) {
     memset(a,0,sizeof(a));
+    for (auto card:cards)
+        a[mp[card[0]]][mp[card[1]]] = 1;
     bool dp[nn][ss][ss][ss][ss] = {};
     for (int st = 0; st < 16; ++st) {
         for (int j = 0; j <4; ++j if ((1<<j) & st) {
@@ -55,11 +60,27 @@ bool run(vector<string> cards) {
             }
         }
         if (dp[nn-1][0][0][0][0]) return true;
+        for (int j = 0; j <4; ++j if (a[1][j] ^ a[14][j]) {
+            if (a[1][j] ^ a[14][j]) a[1][j] = 1, a[14][j] = 0;
+        }
     }
     return false;
 }
 
 int main() {
-
+    for (test:tests)
+        cout << (run(test) ? : "true" : "false") << endl;
     return 0;
+}
+
+
+void initTests() {
+    tests = vector<vector<string>>({
+        {"AS", "KS", "QS", "QD", "QH"},
+        {"A ", "KS", "QS", "QD", "QH", "QC"}
+    
+    });
+    string k = "A23456789TJQKCDHS";
+    vector<int> v({1,2,3,4,5,6,7,8,9,10,11,12,13,0,1,2,3});
+    for (int i = 0; i < k.size(); ++i) mp[k[i]] = v[i];
 }
