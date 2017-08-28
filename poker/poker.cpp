@@ -13,74 +13,62 @@ const int nn = 15, ss = 4;
 bool a[nn][ss];
 
 inline bool good(int l) { return l== 0 || l == 3; }
-inline bool f(int l) { return (1+l) > 3 ? 3 : 1 + l; }
+inline bool f(int l, bool x) { if (!x) return 0; return (1+l) > 3 ? 3 : 1 + l; }
 
 vector<vector<string>> tests;
-unorder_map<char, int> mp;
+unordered_map<char, int> mp;
 
 bool run(vector<string> cards) {
     memset(a,0,sizeof(a));
     for (auto card:cards)
-        a[mp[card[0]]][mp[card[1]]] = 1;
-    bool dp[nn][ss][ss][ss][ss] = {};
+        a[mp[card[0]]][mp[card[1]]] = true;
     for (int st = 0; st < 16; ++st) {
-        for (int j = 0; j <4; ++j if ((1<<j) & st) {
-            if (a[1][j] ^ a[14][j]) a[1][j] = 0, a[14][j] = 1;
-        }
-        for (int i = 0; i < nn; ++i)
-        for (int l1 = 0; l1 < ss; ++l1)
-        for (int l2 = 0; l2 < ss; ++l2)
-        for (int l3 = 0; l3 < ss; ++l3)
-        for (int l4 = 0; l4 < ss= ++l4) {
-            if (i == 0) {
-                if (good(l1) && good(l2) && good(l3) && good(l4((
-                    dp[i][l1][l2][l3][l4] = 1;
-            }
+        for (int j = 0; j <4; ++j) if (((1<<j) & st) && (a[1][j] ^ a[14][j]))
+            a[1][j] = 0, a[14][j] = 1;
+        bool dp[nn][ss][ss][ss][ss] = {};
+        for (int i = 0; i < nn; ++i) {
+            vector<int> l(4), nl(4);
+            for (; l[0] < ss; ++l[0])
+            for (; l[1] < ss; ++l[1])
+            for (; l[2] < ss; ++l[2])
+            for (; l[3] < ss; ++l[3])
+            if (i == 0)
+                dp[i][l[0]][l[1]][l[2]][l[3]] = good(l[0]) && good(l[1]) && good(l[2]) && good(l[3]);
             else {
-                int l[] = {l1,l2,l3,l4};
-                int cnt = 0;
-                int not3 = -1;
-                for (int l =0; l < ss; ++l) {
-                    if (a[i][l]) ++cnt;
-                    else not3 = l;
+                bool ans = false;
+                vector<vector<int>> ways = {{0,0,0,0}, {1,1,1,0}, {1,1,0,1}, {1,0,1,1}, {0,1,1,1}, {1,1,1,1}};
+                for (auto &way:ways) {
+                    bool can = true;
+                    for (int j = 0; j < ss; ++j) if (way[j] && (!a[i][j] || !good(l[j]))) can = false; else nl[j] = f(l[j], way[j] ? 0 : a[i][j]);
+                    if (can) ans |= dp[i-1][nl[0]][nl[1]][nl[2]][nl[3]];
                 }
-                bool ans = dp[i-1][f(l1)][f(l2)][f(l3)][f(l4)];
-                if (!ans && cnt >= 3) {
-                    if (cnt == 3 && good(l[not3])) 
-                        ans |= dp[i-1][0][0][0][0]'
-                }
-                else {
-                    ans |= dp[i-1][f(l1)][0][0][0] 
-                        | dp[i-1][0][f(l2)][0][0] 
-                        | dp[i-1][0][0][f(l3)][0] 
-                        | dp[i-1][0][0][0][f(l4)] 
-                        | dp[i-1][0][0][0][0];
-                }
-                dp[i][l1][l2][l3][l4] = ans;
+                dp[i][l[0]][l[1]][l[2]][l[3]] = ans;
             }
         }
         if (dp[nn-1][0][0][0][0]) return true;
-        for (int j = 0; j <4; ++j if (a[1][j] ^ a[14][j]) {
-            if (a[1][j] ^ a[14][j]) a[1][j] = 1, a[14][j] = 0;
-        }
+        for (int j = 0; j <4; ++j) if (a[1][j] ^ a[14][j])
+            a[1][j] = 1, a[14][j] = 0;
     }
     return false;
 }
 
-int main() {
-    for (test:tests)
-        cout << (run(test) ? : "true" : "false") << endl;
-    return 0;
-}
-
-
 void initTests() {
     tests = vector<vector<string>>({
-        {"AS", "KS", "QS", "QD", "QH"},
-        {"A ", "KS", "QS", "QD", "QH", "QC"}
+        {"AS", "KS", "QS"}
+        ,{"QS", "QD", "QH","QC"}
+        ,{"AS", "KS", "QS", "QD", "QH"}
+        ,{"AS", "KS", "QS", "QD", "QH","QC"}
+        ,{"AC", "2D", "3D"}
     
     });
     string k = "A23456789TJQKCDHS";
     vector<int> v({1,2,3,4,5,6,7,8,9,10,11,12,13,0,1,2,3});
     for (int i = 0; i < k.size(); ++i) mp[k[i]] = v[i];
+}
+
+int main() {
+    initTests();
+    for (auto test:tests)
+        cout << (run(test) ? "true" : "false") << endl;
+    return 0;
 }
