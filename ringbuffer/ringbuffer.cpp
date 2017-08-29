@@ -64,7 +64,7 @@ struct RingBuffer {
 
 void run(int cap, vector<int> input, int chunk) {
     RingBuffer rb(cap, input, chunk);
-    thread first(&RingBuffer::read, &rb);     // spawn new thread that calls foo()
+    thread first(&RingBuffer::read, &rb);
     thread second(&RingBuffer::write, &rb);
     first.join();
     second.join();
